@@ -1,4 +1,4 @@
-import { baseUrl } from '@/api/endpoints'
+import { baseUrl, baseUrlApi, mediaUrl } from '@/api/endpoints'
 import { fetchBlogList } from '@/api/functions/blog.api'
 import assest from '@/json/assest'
 import CustomButton from '@/ui/Buttons/CustomButton'
@@ -249,6 +249,10 @@ export default function BlogMain() {
                                             <Image src={allblog.image} width={263} height={198} alt='blogimage' />
                                         </Link>
                                 </figure> */}
+                                <figure>
+
+                                    <Image src={mediaUrl(`blog/${allblog.image as string}`)} width={263} height={198} alt='blogimage'/>
+                                </figure>
                                 {/* <Box className="blogdate">
                                     <Typography variant='caption'>{allblog.description}</Typography>
                                 </Box> */}

@@ -6,6 +6,7 @@ import assest from '@/json/assest'
 import { useRouter } from 'next/router'
 import { useQuery } from 'react-query'
 import { fetchBlogListDetails, fetchLastestBlogList } from '@/api/functions/blog.api'
+import { mediaUrl } from '@/api/endpoints'
 const BlogdetailsWraper = styled(Box)`
     .blog-detailsWrap{
         position: relative;
@@ -233,7 +234,7 @@ console.log(data?.data?.data,"data?.data");
                     <Grid item xs={12} md={8}>
                         <Box className="wrapperImg-snglBlog">
                             <Box className="wrapperImg-snglBlog">
-                                {/* <figure><Image src={props.singleblogimg} width={750} height={470} alt='singleblogimg'/></figure> */}
+                                <figure><Image src={mediaUrl(`blog/${data?.data?.data?.image as string}`)} width={750} height={470} alt='singleblogimg'/></figure>
                                 <Box className="blogdate">
                                     <Typography variant='caption'>9 Oct, 2022</Typography>
                                 </Box>
@@ -252,11 +253,11 @@ console.log(data?.data?.data,"data?.data");
                             <Box className="singleblogWrp-ltst">
                                 {lastestBlogs?.data.data.map((lastest: any) => (
                                     <Box className="singleblogWrap">
-                                        {/* <figure>
+                                        <figure>
                                             <Link href='/blog-details'>
-                                            <Image src={item.blogimg} width={263} height={198} alt='blogimage'/>
+                                            <Image src={mediaUrl(`blog/${lastest.image as string}`)} width={263} height={198} alt='blogimage'/>
                                             </Link>
-                                        </figure> */}
+                                        </figure>
                                         <Box className="blogdate">
                                             <Typography variant='caption'>{lastest.title}</Typography>
                                         </Box>

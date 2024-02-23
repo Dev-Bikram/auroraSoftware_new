@@ -410,9 +410,14 @@ export default function Header(props: Props) {
       route: "/sample-reports",
     },
     {
+      name: "Login",
+      route: "/login",
+    },
+    {
       name: "Resources",
       route: "/resources",
     },
+    
   ];
 
   const drawer = (
@@ -922,6 +927,7 @@ export default function Header(props: Props) {
                               <MenuItem onClick={handleClose}>
                                 My account
                               </MenuItem>
+                         
                               <MenuItem onClick={handleClose}>Logout</MenuItem>
                             </MenuList>
                           </ClickAwayListener>

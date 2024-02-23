@@ -8,6 +8,9 @@ import Link from 'next/link'
 import CustomButton from '@/ui/Buttons/CustomButton'
 import MuiModalWrapper from '@/ui/Modal/MuiModalWrapper'
 import Image from 'next/image'
+import * as yup from "yup";
+import validationText from '@/json/messages/validationText'
+import { emailRegex } from '@/lib/regex'
 const LoingMainWraper = styled(Box)`
     .loginMain-wrapper{
         position: relative;
@@ -176,6 +179,25 @@ const LoingMainWraper = styled(Box)`
     }
     
 `
+const schema = yup.object().shape({
+    email: yup
+      .string()
+      .trim()
+      .email(validationText.error.email_format)
+      .required(validationText.error.enter_email)
+      .matches(emailRegex, validationText.error.email_format),
+    password: yup.string().trim().required(validationText.error.enter_password),
+    deviceToken: yup.string().nullable()
+  });
+  export type LoginSchemaFormData = yup.InferType<typeof schema>;
+
+
+
+
+
+
+
+
 export default function LoingMain() {
     const [open, setOpen]=useState(false)
     const onHandleClose=()=>{
@@ -184,6 +206,12 @@ export default function LoingMain() {
     const onHandleOpen=()=>{
         setOpen(true);
     }
+   
+
+
+    
+    
+
   return (
     <LoingMainWraper>
         <Box className="loginMain-wrapper">
