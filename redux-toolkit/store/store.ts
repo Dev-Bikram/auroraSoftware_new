@@ -49,7 +49,7 @@ import rootReducer from "../slices/rootReducer";
 
 // const middleware = [logger];
 const persistConfig = {
-  key: "SignaturerxAdmin",
+  key: "auroraSoftware",
   storage,
   version: 1,
 };

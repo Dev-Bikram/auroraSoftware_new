@@ -1,9 +1,11 @@
-
-
-
 import Wrapper from "@/layout/wrapper/Wrapper";
-import LoingMain from "@/components/LoingMain/LoingMain";
+import dynamic from "next/dynamic";
 
+
+
+
+const LoingMain = dynamic(() => import('@/components/LoingMain/LoingMain'), { ssr: false })
+ 
 
 
 

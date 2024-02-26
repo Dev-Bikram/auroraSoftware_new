@@ -32,6 +32,7 @@ export type userData = {
   username?: string;
   phone?: string;
   email?: string;
+  password?: string;
   bio?: string;
   otp?: string;
   profile_image?: string;

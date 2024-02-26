@@ -1,6 +1,6 @@
-import { Checkbox, FormControlLabel, Grid, Typography } from '@mui/material'
-import { Box, Container, styled } from '@mui/system'
-import React, { useState } from 'react'
+import { Checkbox, FormControl, FormControlLabel, Grid, TextField, Typography } from '@mui/material'
+import { Box, Container, Stack, styled } from '@mui/system'
+import React, { useEffect, useState } from 'react'
 import InputFildcommn from '../InputFildcommn/InputFildcommn'
 import CommonFormLeft from '../CommonFormLeft/CommonFormLeft'
 import assest from '@/json/assest'
@@ -11,6 +11,18 @@ import Image from 'next/image'
 import * as yup from "yup";
 import validationText from '@/json/messages/validationText'
 import { emailRegex } from '@/lib/regex'
+import { setLoginData } from '@/reduxtoolkit/slices/userSlice'
+import { useAppDispatch } from '@/hooks/useAppDispatch'
+import { useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { useMutation } from 'react-query'
+import { userLogin } from '@/api/functions/user.api'
+import { useAppSelector } from '@/hooks/useAppSelector'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useRouter } from 'next/router'
+import { SubmitHandler } from 'react-hook-form';
+
+
 const LoingMainWraper = styled(Box)`
     .loginMain-wrapper{
         position: relative;
@@ -188,14 +200,10 @@ const schema = yup.object().shape({
       .matches(emailRegex, validationText.error.email_format),
     password: yup.string().trim().required(validationText.error.enter_password),
     deviceToken: yup.string().nullable()
+     
   });
+
   export type LoginSchemaFormData = yup.InferType<typeof schema>;
-
-
-
-
-
-
 
 
 export default function LoingMain() {
@@ -206,6 +214,60 @@ export default function LoingMain() {
     const onHandleOpen=()=>{
         setOpen(true);
     }
+const router = useRouter();
+ const dispatch = useAppDispatch();
+
+  const { handleSubmit, register, formState: { errors } } = useForm(
+    {
+      resolver: yupResolver(schema),
+      mode: "all",
+      defaultValues: {
+        email: "",
+        password: ""
+      }
+    }
+  )
+
+  const { mutate, isLoading, status, data, error } = useMutation(
+    {
+        mutationKey: ["login"],
+        mutationFn: userLogin
+    }
+  );
+  const { isLoggedIn } = useAppSelector((s) => s.userSlice);
+                   
+  const onSubmit: SubmitHandler<{ email: string; password: string;} > = (data) => {
+
+    mutate(
+      data ,
+      {
+        onSuccess: (res) => {
+       
+          if (res?.status === 200) {
+            if (res?.data) {
+              const { ...userData } = res?.data?.data
+               dispatch( setLoginData(userData));
+              router.push("/");
+            }
+          }
+        }
+      }
+    )
+  }
+
+  useEffect(() => {
+    if (isLoggedIn) {
+     router.push("/");
+    }
+  }, [isLoggedIn]);
+
+  if (status === "error") {
+    // @ts-ignore
+    toast.error(error?.response?.data?.message?.message || error?.response?.data?.message)
+  }
+
+
+
    
 
 
@@ -221,23 +283,34 @@ export default function LoingMain() {
                         <Grid item md={6} xs={12}>
                             <CommonFormLeft tittle="Lorem Ipsum is simply dummy text" subtittle="Lorem Ipsum is simply dummy text of the printing and standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book"/>
                         </Grid>
-                        <Grid item md={6} xs={12}>
+                          <Grid item md={6} xs={12}>
+                        <Stack
+                            component="form"
+                            sx={{
+                              width: '50ch',
+                              margin: 'auto'
+                            }}
+                            spacing={2}
+                            noValidate
+                             autoComplete="off"
+                             onSubmit={handleSubmit(onSubmit)}   
+                          >
                             <Box className="wrapInner-loginform">
                                 <Typography variant='h2'>Log In</Typography>
                                 <Box className="single-inputWrap">
-                                    <InputFildcommn placeholder='Email' type='email' img={assest.emnailinpticn} imgWidth={20} imgHeight={20}/>
+                                    <TextField placeholder='Email' type='email'   {...register("email", { required: true })}/>
                                 </Box>
                                 <Box className="single-inputWrap">
-                                    <InputFildcommn IsPassword labelForPassword='Password' img={assest.passwrdicninpt} imgWidth={20} imgHeight={20}/>
+                                    <TextField  placeholder='Password'  type='Password'   {...register("password", { required: true })} />
                                 </Box>
                                 <Box className="checkbox-common">
                                     <FormControlLabel control={<Checkbox/>} label="Remember Me?" />
                                     <Box className="forgetpassWrd-wrp">
                                         <Link href="javascript:void(0)" onClick={onHandleOpen}>Forgot Password</Link>
-                                    </Box>
+                                    </Box> 
                                 </Box>
                                 <Box className="submtbtn-wraplogin">
-                                    <CustomButton type="button">
+                                    <CustomButton type="submit">
                                         <Typography variant="caption">Login</Typography>
                                     </CustomButton>
                                 </Box>
@@ -247,7 +320,9 @@ export default function LoingMain() {
                                 <Box className="login-signinlinks">
                                     <Typography variant='body1'>Don’t have an account?<Link href="/signup">Sign Up</Link></Typography>
                                 </Box>
-                            </Box>
+                                      </Box>
+                                       </Stack>
+                        
                         </Grid>
                     </Grid>
                 </Box>
